@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode Link Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        button {
+            margin-right: 10px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Unicode Link Converter</h1>
+    <textarea id="unicodeInput" placeholder="Masukkan unicode (contoh: \u7279\u522b\u5468)"></textarea><br>
+    <button onclick="generateLinks()">Generate</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function generateLinks() {
+            const input = document.getElementById('unicodeInput').value;
+            const unicodeArray = input.match(/\\u[0-9a-fA-F]{4}/g);
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
+
+            if (unicodeArray) {
+                unicodeArray.forEach(unicode => {
+                    const hex = unicode.replace('\\u', '').toUpperCase();
+                    const url = `https://codepoints.net/U+${hex}`;
+                    
+                    const linkDiv = document.createElement('div');
+                    const linkText = document.createElement('a');
+                    linkText.href = url;
+                    linkText.textContent = url;
+                    linkText.target = "_blank";
+
+                    const copyButton = document.createElement('button');
+                    copyButton.textContent = 'Copy';
+                    copyButton.onclick = () => copyToClipboard(url);
+
+                    const viewButton = document.createElement('button');
+                    viewButton.textContent = 'View';
+                    viewButton.onclick = () => window.open(url, '_blank');
+
+                    linkDiv.appendChild(linkText);
+                    linkDiv.appendChild(copyButton);
+                    linkDiv.appendChild(viewButton);
+
+                    resultDiv.appendChild(linkDiv);
+                });
+            } else {
+                resultDiv.textContent = 'Tidak ada unicode yang valid ditemukan Desu!';
+            }
+        }
+
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Copied: ' + text);
+        }
+    </script>
+
+</body>
+  </html>
+  
